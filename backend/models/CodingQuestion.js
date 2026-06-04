@@ -8,6 +8,7 @@ const CodingQuestionSchema = new mongoose.Schema(
     sampleInput: { type: String },
     sampleOutput: { type: String },
     constraints: { type: String },
+    answer: { type: String, required: true },
     topic: { type: String, enum: ["arrays", "strings", "linked-lists", "trees", "dynamic-programming"], required: true }
   },
   { timestamps: true }

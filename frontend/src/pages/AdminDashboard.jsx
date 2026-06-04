@@ -87,14 +87,24 @@ const AdminDashboard = () => {
             <div>
               <p className="text-sm font-bold uppercase tracking-wide text-brand-700 dark:text-brand-100">Admin Dashboard</p>
               <h1 className="mt-1 text-2xl font-bold text-slate-950 dark:text-white">Welcome, {user?.name}</h1>
-              <button
-                type="button"
-                onClick={() => navigate("/admin/aptitude-questions")}
-                className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-400"
-              >
-                <FiPlus className="h-4 w-4" />
-                Manage Aptitude Questions
-              </button>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => navigate("/admin/aptitude-questions")}
+                  className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-400"
+                >
+                  <FiPlus className="h-4 w-4" />
+                  Manage Aptitude Questions
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/admin/coding-questions")}
+                  className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
+                >
+                  <FiPlus className="h-4 w-4" />
+                  Manage Coding Questions
+                </button>
+              </div>
             </div>
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-800 dark:bg-slate-800 dark:text-slate-200">
               <FiClock className="h-4 w-4" />
