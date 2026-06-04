@@ -5,6 +5,8 @@ import AptitudeQuestion from "../models/AptitudeQuestion.js";
 import TechnicalQuestion from "../models/TechnicalQuestion.js";
 import aptitudeQuestions from "../utils/aptitudeQuestions.js";
 import technicalQuestionsData from "../utils/technicalQuestions.js";
+import CodingQuestion from "../models/CodingQuestion.js";
+import codingQuestionsData from "../utils/codingQuestions.js";
 import User from "../models/User.js";
 
 dotenv.config();
@@ -44,8 +46,12 @@ const seedData = async () => {
       );
     });
     await TechnicalQuestion.insertMany(technicalQuestionsToInsert);
-    
-    console.log("Seed data inserted successfully for users, aptitude questions, and technical questions");
+
+    // seed coding questions
+    await CodingQuestion.deleteMany({});
+    await CodingQuestion.insertMany(codingQuestionsData);
+
+    console.log("Seed data inserted successfully for users, aptitude, technical, and coding questions");
     process.exit(0);
   } catch (error) {
     console.error(`Seed failed: ${error.message}`);

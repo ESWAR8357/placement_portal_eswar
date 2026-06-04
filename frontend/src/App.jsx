@@ -11,6 +11,10 @@ import TechnicalSubjects from "./pages/TechnicalSubjects.jsx";
 import TechnicalTest from "./pages/TechnicalTest.jsx";
 import TechnicalResult from "./pages/TechnicalResult.jsx";
 import ModulePlaceholder from "./pages/ModulePlaceholder.jsx";
+import CodingQuestions from "./pages/CodingQuestions.jsx";
+import CodingQuestionDetail from "./pages/CodingQuestionDetail.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import AdminAptitudeQuestions from "./pages/AdminAptitudeQuestions.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Profile from "./pages/Profile.jsx";
 import Register from "./pages/Register.jsx";
@@ -82,7 +86,31 @@ const App = () => {
           path="/coding-questions"
           element={
             <ProtectedRoute>
-              <ModulePlaceholder title="Coding Questions" />
+              <CodingQuestions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/coding-questions/:id"
+          element={
+            <ProtectedRoute>
+              <CodingQuestionDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/aptitude-questions"
+          element={
+            <ProtectedRoute>
+              <AdminAptitudeQuestions />
             </ProtectedRoute>
           }
         />

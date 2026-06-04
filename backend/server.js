@@ -9,6 +9,8 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import aptitudeRoutes from "./routes/aptitudeRoutes.js";
 import technicalRoutes from "./routes/technicalRoutes.js";
+import codingQuestionRoutes from "./routes/codingQuestionRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import testRoutes from "./routes/testRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
@@ -61,6 +63,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/tests", testRoutes);
 app.use("/api/tests/aptitude", aptitudeRoutes);
 app.use("/api/tests/technical", technicalRoutes);
+app.use("/api/coding-questions", codingQuestionRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

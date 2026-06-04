@@ -7,5 +7,7 @@ export const ROUTES = {
   aptitudeTests: "/aptitude-tests",
   technicalTests: "/technical-tests",
   codingQuestions: "/coding-questions",
-  interviewQuestions: "/interview-questions"
+  interviewQuestions: "/interview-questions",
+  admin: "/admin",
+  adminAptitudeQuestions: "/admin/aptitude-questions"
 };
