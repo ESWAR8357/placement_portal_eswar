@@ -14,7 +14,7 @@ const navLinkClass = ({ isActive }) =>
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -44,9 +44,16 @@ const Navbar = () => {
             Home
           </NavLink>
           {isAuthenticated && (
-            <NavLink to="/dashboard" className={navLinkClass}>
-              Dashboard
-            </NavLink>
+            <>
+              <NavLink to="/dashboard" className={navLinkClass}>
+                Dashboard
+              </NavLink>
+              {user?.role === "admin" && (
+                <NavLink to="/admin" className={navLinkClass}>
+                  Admin
+                </NavLink>
+              )}
+            </>
           )}
         </div>
 
@@ -97,9 +104,16 @@ const Navbar = () => {
               Home
             </NavLink>
             {isAuthenticated && (
-              <NavLink to="/dashboard" className={navLinkClass} onClick={() => setIsMenuOpen(false)}>
-                Dashboard
-              </NavLink>
+              <>
+                <NavLink to="/dashboard" className={navLinkClass} onClick={() => setIsMenuOpen(false)}>
+                  Dashboard
+                </NavLink>
+                {user?.role === "admin" && (
+                  <NavLink to="/admin" className={navLinkClass} onClick={() => setIsMenuOpen(false)}>
+                    Admin
+                  </NavLink>
+                )}
+              </>
             )}
             <button type="button" onClick={toggleTheme} className="btn-secondary justify-start">
               {isDark ? <FiSun className="h-4 w-4" /> : <FiMoon className="h-4 w-4" />}

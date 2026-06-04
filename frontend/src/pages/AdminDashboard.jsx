@@ -16,6 +16,9 @@ const metricItems = [
   { key: "highestScore", label: "Highest Score", icon: <FiStar className="h-5 w-5" /> }
 ];
 
+const adminActionClass =
+  "inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-400";
+
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [dashboardData, setDashboardData] = useState(null);
@@ -91,15 +94,23 @@ const AdminDashboard = () => {
                 <button
                   type="button"
                   onClick={() => navigate("/admin/aptitude-questions")}
-                  className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-400"
+                  className={adminActionClass}
                 >
                   <FiPlus className="h-4 w-4" />
                   Manage Aptitude Questions
                 </button>
                 <button
                   type="button"
+                  onClick={() => navigate("/admin/technical-questions")}
+                  className={adminActionClass}
+                >
+                  <FiPlus className="h-4 w-4" />
+                  Manage Technical Questions
+                </button>
+                <button
+                  type="button"
                   onClick={() => navigate("/admin/coding-questions")}
-                  className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
+                  className={adminActionClass}
                 >
                   <FiPlus className="h-4 w-4" />
                   Manage Coding Questions
