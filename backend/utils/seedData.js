@@ -2,7 +2,9 @@ import dotenv from "dotenv";
 
 import connectDB from "../config/db.js";
 import AptitudeQuestion from "../models/AptitudeQuestion.js";
+import TechnicalQuestion from "../models/TechnicalQuestion.js";
 import aptitudeQuestions from "../utils/aptitudeQuestions.js";
+import technicalQuestionsData from "../utils/technicalQuestions.js";
 import User from "../models/User.js";
 
 dotenv.config();
@@ -27,9 +29,23 @@ const seedData = async () => {
     await connectDB();
     await User.deleteMany({});
     await AptitudeQuestion.deleteMany({});
+    await TechnicalQuestion.deleteMany({});
+    
     await User.create(users);
     await AptitudeQuestion.create(aptitudeQuestions);
-    console.log("Seed data inserted successfully for users and aptitude questions");
+    
+    const technicalQuestionsToInsert = [];
+    Object.entries(technicalQuestionsData).forEach(([subject, questions]) => {
+      technicalQuestionsToInsert.push(
+        ...questions.map((q) => ({
+          ...q,
+          subject
+        }))
+      );
+    });
+    await TechnicalQuestion.insertMany(technicalQuestionsToInsert);
+    
+    console.log("Seed data inserted successfully for users, aptitude questions, and technical questions");
     process.exit(0);
   } catch (error) {
     console.error(`Seed failed: ${error.message}`);

@@ -7,6 +7,9 @@ import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import AptitudeTest from "./pages/AptitudeTest.jsx";
 import AptitudeTestResult from "./pages/AptitudeTestResult.jsx";
+import TechnicalSubjects from "./pages/TechnicalSubjects.jsx";
+import TechnicalTest from "./pages/TechnicalTest.jsx";
+import TechnicalResult from "./pages/TechnicalResult.jsx";
 import ModulePlaceholder from "./pages/ModulePlaceholder.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Profile from "./pages/Profile.jsx";
@@ -55,7 +58,23 @@ const App = () => {
           path="/technical-tests"
           element={
             <ProtectedRoute>
-              <ModulePlaceholder title="Technical Tests" />
+              <TechnicalSubjects />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/technical-tests/:subject"
+          element={
+            <ProtectedRoute>
+              <TechnicalTest />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/technical-tests/result"
+          element={
+            <ProtectedRoute>
+              <TechnicalResult />
             </ProtectedRoute>
           }
         />
