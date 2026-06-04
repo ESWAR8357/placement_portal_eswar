@@ -1,0 +1,11 @@
+export const ROUTES = {
+  home: "/",
+  login: "/login",
+  register: "/register",
+  dashboard: "/dashboard",
+  profile: "/profile",
+  aptitudeTests: "/aptitude-tests",
+  technicalTests: "/technical-tests",
+  codingQuestions: "/coding-questions",
+  interviewQuestions: "/interview-questions"
+};
