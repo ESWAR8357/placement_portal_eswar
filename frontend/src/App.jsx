@@ -5,6 +5,8 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
+import AptitudeTest from "./pages/AptitudeTest.jsx";
+import AptitudeTestResult from "./pages/AptitudeTestResult.jsx";
 import ModulePlaceholder from "./pages/ModulePlaceholder.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Profile from "./pages/Profile.jsx";
@@ -37,7 +39,15 @@ const App = () => {
           path="/aptitude-tests"
           element={
             <ProtectedRoute>
-              <ModulePlaceholder title="Aptitude Tests" />
+              <AptitudeTest />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/aptitude-tests/result"
+          element={
+            <ProtectedRoute>
+              <AptitudeTestResult />
             </ProtectedRoute>
           }
         />

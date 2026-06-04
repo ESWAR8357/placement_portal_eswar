@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 
 import connectDB from "../config/db.js";
+import AptitudeQuestion from "../models/AptitudeQuestion.js";
+import aptitudeQuestions from "../utils/aptitudeQuestions.js";
 import User from "../models/User.js";
 
 dotenv.config();
@@ -24,8 +26,10 @@ const seedData = async () => {
   try {
     await connectDB();
     await User.deleteMany({});
+    await AptitudeQuestion.deleteMany({});
     await User.create(users);
-    console.log("Phase 1 seed users inserted successfully");
+    await AptitudeQuestion.create(aptitudeQuestions);
+    console.log("Seed data inserted successfully for users and aptitude questions");
     process.exit(0);
   } catch (error) {
     console.error(`Seed failed: ${error.message}`);

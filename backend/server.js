@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import aptitudeRoutes from "./routes/aptitudeRoutes.js";
 import testRoutes from "./routes/testRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
@@ -43,7 +44,7 @@ app.use(
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "Placement Preparation Portal API is running",
-    phase: "Phase 1"
+    phase: "Phase 4"
   });
 });
 
@@ -57,6 +58,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tests", testRoutes);
+app.use("/api/tests/aptitude", aptitudeRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
