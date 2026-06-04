@@ -12,6 +12,7 @@ import technicalRoutes from "./routes/technicalRoutes.js";
 import codingQuestionRoutes from "./routes/codingQuestionRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import testRoutes from "./routes/testRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
@@ -65,6 +66,7 @@ app.use("/api/tests/aptitude", aptitudeRoutes);
 app.use("/api/tests/technical", technicalRoutes);
 app.use("/api/coding-questions", codingQuestionRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

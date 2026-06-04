@@ -5,9 +5,10 @@ import ActivityCard from "../components/ActivityCard.jsx";
 import DashboardSidebar from "../components/DashboardSidebar.jsx";
 import DashboardSkeleton from "../components/DashboardSkeleton.jsx";
 import QuickActionCard from "../components/QuickActionCard.jsx";
+import ReadinessCard from "../components/ReadinessCard.jsx";
 import StatsCard from "../components/StatsCard.jsx";
 import useAuth from "../hooks/useAuth.js";
-import { getProfile, getTestHistory } from "../services/dashboardService.js";
+import { getProfile, getReadinessScore, getTestHistory } from "../services/dashboardService.js";
 import { formatDate } from "../utils/formatters.js";
 import { getApiErrorMessage } from "../utils/validators.js";
 
@@ -45,6 +46,9 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [readiness, setReadiness] = useState(null);
+  const [readinessLoading, setReadinessLoading] = useState(true);
+  const [readinessError, setReadinessError] = useState("");
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -57,6 +61,15 @@ const Dashboard = () => {
         setError(getApiErrorMessage(apiError, "Unable to load dashboard data."));
       } finally {
         setIsLoading(false);
+      }
+
+      try {
+        const readinessData = await getReadinessScore();
+        setReadiness(readinessData);
+      } catch (readinessApiError) {
+        setReadinessError(getApiErrorMessage(readinessApiError, "Unable to load readiness score."));
+      } finally {
+        setReadinessLoading(false);
       }
     };
 
@@ -165,6 +178,8 @@ const Dashboard = () => {
                   tone="brand"
                 />
               </div>
+
+              <ReadinessCard data={readiness} isLoading={readinessLoading} error={readinessError} />
 
               <div className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
                 <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">

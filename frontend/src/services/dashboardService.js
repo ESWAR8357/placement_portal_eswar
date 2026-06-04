@@ -14,3 +14,8 @@ export const getTestHistory = async () => {
   const { data } = await api.get("/tests/history");
   return data;
 };
+
+export const getReadinessScore = async () => {
+  const { data } = await api.get("/profile/readiness");
+  return data;
+};
