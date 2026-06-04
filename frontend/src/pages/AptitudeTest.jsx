@@ -101,6 +101,18 @@ const AptitudeTest = () => {
     setIsSubmitting(true);
     setSubmissionError("");
 
+    const timeTaken = TEST_DURATION_SECONDS - secondsLeft;
+    const reviewAnswers = questions.map((question) => {
+      const selectedAnswer = answers[question._id] ?? "";
+      return {
+        id: question._id,
+        questionText: question.question,
+        selectedAnswer,
+        correctAnswer: question.correctOption,
+        status: selectedAnswer === question.correctOption ? "correct" : "incorrect"
+      };
+    });
+
     try {
       const payload = {
         testName: "Aptitude Test",
@@ -114,7 +126,11 @@ const AptitudeTest = () => {
 
       navigate("/aptitude-tests/result", {
         state: {
-          result: response.result,
+          result: {
+            ...response.result,
+            reviewAnswers,
+            timeTaken
+          },
           user: response.user,
           autoSubmitted: autoSubmit
         }

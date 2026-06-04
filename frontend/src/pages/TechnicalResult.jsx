@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiArrowRight, FiClock } from "react-icons/fi";
 
 import useAuth from "../hooks/useAuth.js";
+import ReviewAnswersPanel from "../components/ReviewAnswersPanel.jsx";
 import { formatDate } from "../utils/formatters.js";
 
 const performanceMessage = (percentage) => {
@@ -18,12 +19,23 @@ const TechnicalResult = () => {
   const { updateUser } = useAuth();
   const state = location.state || {};
   const { result, user, autoSubmitted } = state;
+  const [showReview, setShowReview] = useState(false);
 
   useEffect(() => {
     if (user) {
       updateUser(user);
     }
   }, [user, updateUser]);
+
+  const formatDuration = (seconds) => {
+    if (seconds == null || Number.isNaN(Number(seconds))) {
+      return "Not available";
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    const remainder = seconds % 60;
+    return `${minutes}m ${remainder.toString().padStart(2, "0")}s`;
+  };
 
   if (!result) {
     return (
@@ -75,14 +87,42 @@ const TechnicalResult = () => {
               <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{result.score}</p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
-              <p className="text-sm text-slate-500 dark:text-slate-400">Total Questions</p>
-              <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{result.totalQuestions}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Wrong Answers</p>
+              <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{result.incorrectCount}</p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
-              <p className="text-sm text-slate-500 dark:text-slate-400">Performance</p>
-              <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{performanceMessage(result.percentage)}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Time Taken</p>
+              <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{formatDuration(result.timeTaken)}</p>
             </div>
           </div>
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <button
+              type="button"
+              onClick={() => setShowReview((prev) => !prev)}
+              className="btn-secondary inline-flex items-center justify-center gap-2"
+            >
+              {showReview ? "Hide Review" : "Review Answers"}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/dashboard')}
+              className="btn-primary inline-flex items-center justify-center gap-2"
+            >
+              <FiArrowRight className="h-4 w-4" aria-hidden="true" />
+              Dashboard
+            </button>
+          </div>
+
+          {showReview && (
+            <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900">
+              <h2 className="text-lg font-semibold text-slate-950 dark:text-white">Review Answers</h2>
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Check each question, your selection, and the correct answer.</p>
+              <div className="mt-6">
+                <ReviewAnswersPanel answers={result.reviewAnswers || []} />
+              </div>
+            </div>
+          )}
 
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
             <button
