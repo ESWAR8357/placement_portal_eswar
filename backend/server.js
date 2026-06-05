@@ -62,6 +62,14 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.get("/api/cors-test", (req, res) => {
+  res.status(200).json({
+    message: "CORS test route active",
+    origin: req.headers.origin || null,
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/tests", testRoutes);
 app.use("/api/tests/aptitude", aptitudeRoutes);
