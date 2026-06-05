@@ -49,8 +49,7 @@ export const getAnalyticsTests = async (req, res, next) => {
         {
           $bucket: {
             groupBy: "$percentage",
-            boundaries: [0, 25, 50, 75, 100],
-            default: "100",
+            boundaries: [0, 25, 50, 75, 101],
             output: { count: { $sum: 1 } }
           }
         }
@@ -64,7 +63,7 @@ export const getAnalyticsTests = async (req, res, next) => {
       { range: "0–24%", count: scoreRanges.find((b) => b._id === 0)?.count || 0 },
       { range: "25–49%", count: scoreRanges.find((b) => b._id === 25)?.count || 0 },
       { range: "50–74%", count: scoreRanges.find((b) => b._id === 50)?.count || 0 },
-      { range: "75–100%", count: (scoreRanges.find((b) => b._id === 75)?.count || 0) + (scoreRanges.find((b) => b._id === "100")?.count || 0) }
+      { range: "75–100%", count: scoreRanges.find((b) => b._id === 75)?.count || 0 }
     ];
 
     res.status(200).json({
