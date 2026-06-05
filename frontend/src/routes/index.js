@@ -11,5 +11,6 @@ export const ROUTES = {
   admin: "/admin",
   adminAptitudeQuestions: "/admin/aptitude-questions",
   adminTechnicalQuestions: "/admin/technical-questions",
-  adminCodingQuestions: "/admin/coding-questions"
+  adminCodingQuestions: "/admin/coding-questions",
+  adminAnalytics: "/admin/analytics"
 };

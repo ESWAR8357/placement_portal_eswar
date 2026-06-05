@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiActivity, FiAward, FiBarChart2, FiClock, FiPlus, FiShield, FiStar, FiUser, FiUsers } from "react-icons/fi";
+import { FiActivity, FiAward, FiBarChart2, FiClock, FiPieChart, FiPlus, FiShield, FiStar, FiUser, FiUsers } from "react-icons/fi";
 
 import Loader from "../components/Loader.jsx";
 import useAuth from "../hooks/useAuth.js";
@@ -114,6 +114,14 @@ const AdminDashboard = () => {
                 >
                   <FiPlus className="h-4 w-4" />
                   Manage Coding Questions
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/admin/analytics")}
+                  className={adminActionClass}
+                >
+                  <FiPieChart className="h-4 w-4" />
+                  View Analytics
                 </button>
               </div>
             </div>

@@ -21,6 +21,11 @@ import {
   updateAdminCodingQuestion,
   deleteAdminCodingQuestion
 } from "../controllers/adminCodingController.js";
+import {
+  getAnalyticsOverview,
+  getAnalyticsTests,
+  getAnalyticsUsers
+} from "../controllers/analyticsController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -30,6 +35,10 @@ router.use(authorize("admin"));
 
 router.get("/dashboard", getAdminDashboard);
 router.get("/users", getAdminUsers);
+
+router.get("/analytics/overview", getAnalyticsOverview);
+router.get("/analytics/tests", getAnalyticsTests);
+router.get("/analytics/users", getAnalyticsUsers);
 
 router.get("/aptitude-questions", getAdminAptitudeQuestions);
 router.post("/aptitude-questions", createAdminAptitudeQuestion);

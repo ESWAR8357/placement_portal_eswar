@@ -17,6 +17,7 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminAptitudeQuestions from "./pages/AdminAptitudeQuestions.jsx";
 import AdminTechnicalQuestions from "./pages/AdminTechnicalQuestions.jsx";
 import AdminCodingQuestions from "./pages/AdminCodingQuestions.jsx";
+import AdminAnalytics from "./pages/AdminAnalytics.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Profile from "./pages/Profile.jsx";
 import Register from "./pages/Register.jsx";
@@ -129,6 +130,14 @@ const App = () => {
           element={
             <ProtectedRoute>
               <AdminCodingQuestions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/analytics"
+          element={
+            <ProtectedRoute>
+              <AdminAnalytics />
             </ProtectedRoute>
           }
         />
