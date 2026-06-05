@@ -22,27 +22,13 @@ const PORT = process.env.PORT || 5000;
 
 connectDB();
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://placement-preparation-portal.vercel.app"
-];
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS blocked: ${origin}`));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-};
-
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.use(
+  cors({
+    origin: true,
+    credentials: true
+  })
+);
+app.options("*", cors({ origin: true, credentials: true }));
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" }
