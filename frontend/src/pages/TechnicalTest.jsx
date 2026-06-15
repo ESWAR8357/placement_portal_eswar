@@ -112,16 +112,37 @@ const TechnicalTest = () => {
     setSubmissionError("");
 
     const timeTaken = TEST_DURATION_SECONDS - secondsLeft;
+
     const reviewAnswers = questions.map((question) => {
       const selectedAnswer = answers[question._id] ?? "";
+      const correctAnswer = question.answer;
+      const status = selectedAnswer === correctAnswer ? "correct" : "incorrect";
+
+      console.log("[TechnicalTest] build reviewAnswer", {
+        questionId: question._id,
+        questionText: question.question,
+        selectedAnswer,
+        correctAnswer,
+        status
+      });
+
       return {
         id: question._id,
         questionText: question.question,
         selectedAnswer,
-        correctAnswer: question.answer,
-        status: selectedAnswer === question.answer ? "correct" : "incorrect"
+        correctAnswer,
+        status
       };
     });
+
+    try {
+      sessionStorage.setItem(
+        "placementPortalLastTechnicalReview",
+        JSON.stringify({ reviewAnswers, timeTaken })
+      );
+    } catch (e) {
+      console.warn("[TechnicalTest] failed to persist reviewAnswers", e);
+    }
 
     try {
       const payload = {
