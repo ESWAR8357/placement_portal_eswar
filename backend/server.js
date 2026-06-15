@@ -10,6 +10,7 @@ import authRoutes from "./routes/authRoutes.js";
 import aptitudeRoutes from "./routes/aptitudeRoutes.js";
 import technicalRoutes from "./routes/technicalRoutes.js";
 import codingQuestionRoutes from "./routes/codingQuestionRoutes.js";
+import codingAssessmentRoutes from "./routes/codingAssessmentRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import testRoutes from "./routes/testRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
@@ -69,6 +70,7 @@ app.use("/api/tests/technical", technicalRoutes);
 app.use("/api/coding-questions", codingQuestionRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/coding", codingAssessmentRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

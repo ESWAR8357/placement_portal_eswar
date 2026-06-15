@@ -163,7 +163,7 @@ const AdminCodingQuestions = () => {
                   <input
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search by title"
+                    placeholder="Search by title / category / difficulty"
                     className="w-full bg-transparent text-sm text-slate-900 outline-none dark:text-slate-100"
                   />
                 </label>
@@ -230,13 +230,13 @@ const AdminCodingQuestions = () => {
               ) : (
                 <div className="divide-y divide-slate-200 dark:divide-slate-800">
                   {questions.map((question) => (
-                    <div key={question._id} className="grid grid-cols-[3fr_1fr_1fr_1fr] gap-4 px-4 py-4 text-sm text-slate-700 dark:text-slate-200 sm:grid-cols-[4fr_1fr_1fr_1fr]">
-                      <div>
-                        <p className="font-semibold text-slate-950 dark:text-white">{question.title}</p>
-                        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{question.description}</p>
-                      </div>
-                      <div className="capitalize">{question.topic.replace(/-/g, " ")}</div>
-                      <div className="capitalize">{question.difficulty}</div>
+                      <div key={question._id} className="grid grid-cols-[3fr_1fr_1fr_1fr] gap-4 px-4 py-4 text-sm text-slate-700 dark:text-slate-200 sm:grid-cols-[4fr_1fr_1fr_1fr]">
+                        <div>
+                          <p className="font-semibold text-slate-950 dark:text-white">{question.title}</p>
+                          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{question.topic}</p>
+                        </div>
+                        <div className="capitalize">{question.topic.replace(/-/g, " ")}</div>
+                        <div className="capitalize">{question.difficulty}</div>
                       <div className="flex items-center justify-end gap-2">
                         <button
                           type="button"
