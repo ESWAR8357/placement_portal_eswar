@@ -102,16 +102,37 @@ const AptitudeTest = () => {
     setSubmissionError("");
 
     const timeTaken = TEST_DURATION_SECONDS - secondsLeft;
+
     const reviewAnswers = questions.map((question) => {
       const selectedAnswer = answers[question._id] ?? "";
+      const correctAnswer = question.correctOption;
+      const status = selectedAnswer === correctAnswer ? "correct" : "incorrect";
+
+      console.log("[AptitudeTest] build reviewAnswer", {
+        questionId: question._id,
+        questionText: question.question,
+        selectedAnswer,
+        correctAnswer,
+        status
+      });
+
       return {
         id: question._id,
         questionText: question.question,
         selectedAnswer,
-        correctAnswer: question.correctOption,
-        status: selectedAnswer === question.correctOption ? "correct" : "incorrect"
+        correctAnswer,
+        status
       };
     });
+
+    try {
+      sessionStorage.setItem(
+        "placementPortalLastAptitudeReview",
+        JSON.stringify({ reviewAnswers, timeTaken })
+      );
+    } catch (e) {
+      console.warn("[AptitudeTest] failed to persist reviewAnswers", e);
+    }
 
     try {
       const payload = {

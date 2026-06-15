@@ -12,6 +12,26 @@ const AptitudeTestResult = () => {
   const { updateUser } = useAuth();
   const state = location.state || {};
   const { result, user, autoSubmitted } = state;
+
+  const persistedReviewRaw = (() => {
+    try {
+      return sessionStorage.getItem("placementPortalLastAptitudeReview");
+    } catch {
+      return null;
+    }
+  })();
+
+  const persistedReview = persistedReviewRaw ? JSON.parse(persistedReviewRaw) : null;
+
+  const resolvedResult = result
+    ? result
+    : persistedReview
+      ? {
+          ...persistedReview,
+          reviewAnswers: persistedReview.reviewAnswers
+        }
+      : null;
+
   const [showReview, setShowReview] = useState(false);
 
   useEffect(() => {
@@ -30,7 +50,8 @@ const AptitudeTestResult = () => {
     return `${minutes}m ${remainder.toString().padStart(2, "0")}s`;
   };
 
-  if (!result) {
+  if (!resolvedResult) {
+
     return (
       <section className="container-page py-10">
         <div className="rounded-lg border border-slate-200 bg-white p-8 text-center shadow-soft dark:border-slate-800 dark:bg-slate-900">
@@ -57,7 +78,8 @@ const AptitudeTestResult = () => {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wide text-brand-700 dark:text-brand-100">Result Summary</p>
-              <h1 className="mt-3 text-3xl font-bold text-slate-950 dark:text-white">{result.testName}</h1>
+              <h1 className="mt-3 text-3xl font-bold text-slate-950 dark:text-white">{resolvedResult.testName}</h1>
+
             </div>
             <div className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 dark:bg-brand-900/30 dark:text-brand-100">
               <FiClock className="h-4 w-4" aria-hidden="true" />
@@ -68,28 +90,34 @@ const AptitudeTestResult = () => {
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950">
               <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Score</p>
-              <p className="mt-3 text-4xl font-bold text-slate-950 dark:text-white">{result.score}</p>
+              <p className="mt-3 text-4xl font-bold text-slate-950 dark:text-white">{resolvedResult.score}</p>
+
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Correct answers</p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950">
               <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Percentage</p>
-              <p className="mt-3 text-4xl font-bold text-brand-700 dark:text-brand-100">{result.percentage}%</p>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Total questions: {result.totalQuestions}</p>
+              <p className="mt-3 text-4xl font-bold text-brand-700 dark:text-brand-100">{resolvedResult.percentage}%</p>
+
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Total questions: {resolvedResult.totalQuestions}</p>
+
             </div>
           </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
               <p className="text-sm text-slate-500 dark:text-slate-400">Answered</p>
-              <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{result.answeredCount}</p>
+              <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{resolvedResult.answeredCount}</p>
+
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
               <p className="text-sm text-slate-500 dark:text-slate-400">Wrong Answers</p>
-              <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{result.incorrectCount}</p>
+              <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{resolvedResult.incorrectCount}</p>
+
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
               <p className="text-sm text-slate-500 dark:text-slate-400">Time Taken</p>
-              <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{formatDuration(result.timeTaken)}</p>
+              <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{formatDuration(resolvedResult.timeTaken)}</p>
+
             </div>
           </div>
 
@@ -116,7 +144,8 @@ const AptitudeTestResult = () => {
               <h2 className="text-lg font-semibold text-slate-950 dark:text-white">Review Answers</h2>
               <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Check each question, answer, and correctness below.</p>
               <div className="mt-6">
-                <ReviewAnswersPanel answers={result.reviewAnswers || []} />
+                <ReviewAnswersPanel answers={resolvedResult.reviewAnswers || []} />
+
               </div>
             </div>
           )}

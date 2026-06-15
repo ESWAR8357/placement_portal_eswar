@@ -19,14 +19,14 @@ export const getAptitudeQuestions = async (req, res, next) => {
     let questions = await AptitudeQuestion.find({ category: "aptitude" })
       .sort({ createdAt: 1 })
       .limit(limit)
-      .select("question options");
+      .select("question options correctOption");
 
     if (!questions.length) {
       await AptitudeQuestion.insertMany(aptitudeQuestions);
       questions = await AptitudeQuestion.find({ category: "aptitude" })
         .sort({ createdAt: 1 })
         .limit(limit)
-        .select("question options");
+        .select("question options correctOption");
     }
 
     res.status(200).json({ questions });

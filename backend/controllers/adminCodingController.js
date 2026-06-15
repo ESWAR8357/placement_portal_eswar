@@ -53,28 +53,33 @@ export const createAdminCodingQuestion = async (req, res, next) => {
   try {
     const {
       title,
-      description,
+      category,
       topic,
       difficulty = "medium",
+      problemStatement,
+      description,
+      inputFormat = "",
+      outputFormat = "",
+      constraints = "",
       sampleInput = "",
       sampleOutput = "",
-      constraints = "",
-      answer
+      explanation = "",
+      solution,
+      answer,
+      timeComplexity = "",
+      spaceComplexity = ""
     } = req.body;
+
+    const effectiveTopic = category || topic;
 
     if (!title || typeof title !== "string" || !title.trim()) {
       res.status(400);
       throw new Error("Title is required.");
     }
 
-    if (!description || typeof description !== "string" || !description.trim()) {
+    if (!effectiveTopic || !codingTopics.includes(effectiveTopic)) {
       res.status(400);
-      throw new Error("Description is required.");
-    }
-
-    if (!topic || !codingTopics.includes(topic)) {
-      res.status(400);
-      throw new Error("Topic is required and must be valid.");
+      throw new Error("Category/Topic is required and must be valid.");
     }
 
     if (!difficulties.includes(difficulty)) {
@@ -82,20 +87,43 @@ export const createAdminCodingQuestion = async (req, res, next) => {
       throw new Error("Difficulty must be easy, medium, or hard.");
     }
 
-    if (!answer || typeof answer !== "string" || !answer.trim()) {
+    const effectiveProblemStatement = (problemStatement ?? description ?? "").toString();
+    const effectiveSolution = (solution ?? answer ?? "").toString();
+
+    if (!effectiveProblemStatement.trim()) {
       res.status(400);
-      throw new Error("Answer is required.");
+      throw new Error("problemStatement is required.");
     }
+
+    if (!effectiveSolution.trim()) {
+      res.status(400);
+      throw new Error("solution is required.");
+    }
+
+    // Backward-compat: keep legacy fields in sync.
+    const normalizedDescription = effectiveProblemStatement.trim();
+    const normalizedAnswer = effectiveSolution.trim();
 
     const questionRecord = await CodingQuestion.create({
       title: title.trim(),
-      description: description.trim(),
-      topic,
+      topic: effectiveTopic,
       difficulty,
-      sampleInput: sampleInput.trim(),
-      sampleOutput: sampleOutput.trim(),
-      constraints: constraints.trim(),
-      answer: answer.trim()
+
+      // new assessment fields
+      problemStatement: effectiveProblemStatement.trim(),
+      inputFormat: inputFormat.toString().trim(),
+      outputFormat: outputFormat.toString().trim(),
+      constraints: constraints.toString().trim(),
+      sampleInput: sampleInput.toString().trim(),
+      sampleOutput: sampleOutput.toString().trim(),
+      explanation: explanation.toString().trim(),
+      solution: effectiveSolution.trim(),
+      timeComplexity: timeComplexity.toString().trim(),
+      spaceComplexity: spaceComplexity.toString().trim(),
+
+      // legacy fields (do NOT delete)
+      description: normalizedDescription,
+      answer: normalizedAnswer
     });
 
     res.status(201).json({ question: questionRecord });
@@ -109,28 +137,33 @@ export const updateAdminCodingQuestion = async (req, res, next) => {
     const { id } = req.params;
     const {
       title,
-      description,
+      category,
       topic,
       difficulty = "medium",
+      problemStatement,
+      description,
+      inputFormat = "",
+      outputFormat = "",
+      constraints = "",
       sampleInput = "",
       sampleOutput = "",
-      constraints = "",
-      answer
+      explanation = "",
+      solution,
+      answer,
+      timeComplexity = "",
+      spaceComplexity = ""
     } = req.body;
+
+    const effectiveTopic = category || topic;
 
     if (!title || typeof title !== "string" || !title.trim()) {
       res.status(400);
       throw new Error("Title is required.");
     }
 
-    if (!description || typeof description !== "string" || !description.trim()) {
+    if (!effectiveTopic || !codingTopics.includes(effectiveTopic)) {
       res.status(400);
-      throw new Error("Description is required.");
-    }
-
-    if (!topic || !codingTopics.includes(topic)) {
-      res.status(400);
-      throw new Error("Topic is required and must be valid.");
+      throw new Error("Category/Topic is required and must be valid.");
     }
 
     if (!difficulties.includes(difficulty)) {
@@ -138,9 +171,17 @@ export const updateAdminCodingQuestion = async (req, res, next) => {
       throw new Error("Difficulty must be easy, medium, or hard.");
     }
 
-    if (!answer || typeof answer !== "string" || !answer.trim()) {
+    const effectiveProblemStatement = (problemStatement ?? description ?? "").toString();
+    const effectiveSolution = (solution ?? answer ?? "").toString();
+
+    if (!effectiveProblemStatement.trim()) {
       res.status(400);
-      throw new Error("Answer is required.");
+      throw new Error("problemStatement is required.");
+    }
+
+    if (!effectiveSolution.trim()) {
+      res.status(400);
+      throw new Error("solution is required.");
     }
 
     const existingQuestion = await CodingQuestion.findById(id);
@@ -151,13 +192,24 @@ export const updateAdminCodingQuestion = async (req, res, next) => {
     }
 
     existingQuestion.title = title.trim();
-    existingQuestion.description = description.trim();
-    existingQuestion.topic = topic;
+    existingQuestion.topic = effectiveTopic;
     existingQuestion.difficulty = difficulty;
-    existingQuestion.sampleInput = sampleInput.trim();
-    existingQuestion.sampleOutput = sampleOutput.trim();
-    existingQuestion.constraints = constraints.trim();
-    existingQuestion.answer = answer.trim();
+
+    // new fields
+    existingQuestion.problemStatement = effectiveProblemStatement.trim();
+    existingQuestion.inputFormat = inputFormat.toString().trim();
+    existingQuestion.outputFormat = outputFormat.toString().trim();
+    existingQuestion.constraints = constraints.toString().trim();
+    existingQuestion.sampleInput = sampleInput.toString().trim();
+    existingQuestion.sampleOutput = sampleOutput.toString().trim();
+    existingQuestion.explanation = explanation.toString().trim();
+    existingQuestion.solution = effectiveSolution.trim();
+    existingQuestion.timeComplexity = timeComplexity.toString().trim();
+    existingQuestion.spaceComplexity = spaceComplexity.toString().trim();
+
+    // legacy sync (migration safety)
+    existingQuestion.description = effectiveProblemStatement.trim();
+    existingQuestion.answer = effectiveSolution.trim();
 
     await existingQuestion.save();
 

@@ -69,7 +69,7 @@ export const getTechnicalQuestions = async (req, res, next) => {
     let questions = await TechnicalQuestion.find({ subject })
       .sort({ createdAt: 1 })
       .limit(limit)
-      .select("question options");
+      .select("question options answer");
 
     if (!questions.length) {
       const questionsToInsert = technicalQuestionsData[subject].map((q) => ({

@@ -13,6 +13,9 @@ import TechnicalResult from "./pages/TechnicalResult.jsx";
 import ModulePlaceholder from "./pages/ModulePlaceholder.jsx";
 import CodingQuestions from "./pages/CodingQuestions.jsx";
 import CodingQuestionDetail from "./pages/CodingQuestionDetail.jsx";
+import CodingAssessment from "./pages/CodingAssessment.jsx";
+import CodingAssessmentResult from "./pages/CodingAssessmentResult.jsx";
+import CodingAssessmentReview from "./pages/CodingAssessmentReview.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminAptitudeQuestions from "./pages/AdminAptitudeQuestions.jsx";
 import AdminTechnicalQuestions from "./pages/AdminTechnicalQuestions.jsx";
@@ -98,6 +101,30 @@ const App = () => {
           element={
             <ProtectedRoute>
               <CodingQuestionDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/coding-assessment"
+          element={
+            <ProtectedRoute>
+              <CodingAssessment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/coding-assessment/result"
+          element={
+            <ProtectedRoute>
+              <CodingAssessmentResult />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/coding-assessment/review"
+          element={
+            <ProtectedRoute>
+              <CodingAssessmentReview />
             </ProtectedRoute>
           }
         />
