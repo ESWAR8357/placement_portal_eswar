@@ -1,7 +1,6 @@
 import AptitudeQuestion from "../models/AptitudeQuestion.js";
 import TestResult from "../models/TestResult.js";
 import aptitudeQuestions from "../utils/aptitudeQuestions.js";
-import { refreshUserTestStats } from "../utils/userStats.js";
 
 const sanitizeUser = (user) => ({
   id: user._id,
@@ -20,14 +19,14 @@ export const getAptitudeQuestions = async (req, res, next) => {
     let questions = await AptitudeQuestion.find({ category: "aptitude" })
       .sort({ createdAt: 1 })
       .limit(limit)
-      .select("question options");
+      .select("question options correctOption");
 
     if (!questions.length) {
       await AptitudeQuestion.insertMany(aptitudeQuestions);
       questions = await AptitudeQuestion.find({ category: "aptitude" })
         .sort({ createdAt: 1 })
         .limit(limit)
-        .select("question options");
+        .select("question options correctOption");
     }
 
     res.status(200).json({ questions });
@@ -45,12 +44,8 @@ export const submitAptitudeTest = async (req, res, next) => {
       throw new Error("At least one answer must be submitted");
     }
 
-    const submittedAnswers = new Map(
-      answers
-        .filter((answer) => answer?.questionId)
-        .map((answer) => [String(answer.questionId), answer.selectedOption ?? ""])
-    );
-    const questions = await AptitudeQuestion.find({ _id: { $in: [...submittedAnswers.keys()] } });
+    const questionIds = answers.map((answer) => answer.questionId);
+    const questions = await AptitudeQuestion.find({ _id: { $in: questionIds } });
 
     if (!questions.length) {
       res.status(400);
@@ -61,31 +56,22 @@ export const submitAptitudeTest = async (req, res, next) => {
     let correctCount = 0;
     let answeredCount = 0;
 
-    const reviewAnswers = [...submittedAnswers.entries()]
-      .filter(([questionId]) => questionsMap.has(questionId))
-      .map(([questionId, selectedOption]) => {
-        const question = questionsMap.get(questionId);
-        const selectedAnswer = String(selectedOption ?? "");
-        const isCorrect = selectedAnswer === question.correctOption;
+    answers.forEach((answer) => {
+      const question = questionsMap.get(answer.questionId);
+      if (!question) {
+        return;
+      }
 
-        if (selectedAnswer.trim() !== "") {
-          answeredCount += 1;
-        }
+      if (answer.selectedOption != null && String(answer.selectedOption).trim() !== "") {
+        answeredCount += 1;
+      }
 
-        if (isCorrect) {
-          correctCount += 1;
-        }
+      if (answer.selectedOption === question.correctOption) {
+        correctCount += 1;
+      }
+    });
 
-        return {
-          id: question._id,
-          questionText: question.question,
-          selectedAnswer,
-          correctAnswer: question.correctOption,
-          status: isCorrect ? "correct" : "incorrect"
-        };
-      });
-
-    const totalQuestions = reviewAnswers.length;
+    const totalQuestions = questions.length;
     const incorrectCount = totalQuestions - correctCount;
     const percentage = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
 
@@ -99,7 +85,14 @@ export const submitAptitudeTest = async (req, res, next) => {
       date: new Date()
     });
 
-    await refreshUserTestStats(req.user);
+    const previousCount = req.user.testsTaken || 0;
+    const nextCount = previousCount + 1;
+    req.user.testsTaken = nextCount;
+    req.user.averageScore = Math.round(
+      ((req.user.averageScore || 0) * previousCount + percentage) / nextCount
+    );
+    req.user.highestScore = Math.max(req.user.highestScore || 0, percentage);
+    await req.user.save();
 
     res.status(201).json({
       result: {
@@ -112,8 +105,7 @@ export const submitAptitudeTest = async (req, res, next) => {
         date: result.date,
         correctCount,
         incorrectCount,
-        answeredCount,
-        reviewAnswers
+        answeredCount
       },
       user: sanitizeUser(req.user)
     });

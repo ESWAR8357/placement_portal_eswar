@@ -48,9 +48,9 @@ export const getReadinessScore = async (req, res, next) => {
     if (aptitudeResults.length && technicalResults.length) {
       baseScore = avgTechnical * TECHNICAL_WEIGHT + avgAptitude * APTITUDE_WEIGHT;
     } else if (technicalResults.length) {
-      baseScore = avgTechnical;
+      baseScore = avgTechnical * TECHNICAL_WEIGHT;
     } else if (aptitudeResults.length) {
-      baseScore = avgAptitude;
+      baseScore = avgAptitude * APTITUDE_WEIGHT;
     }
 
     // Confidence multiplier: more tests → closer to 1.0

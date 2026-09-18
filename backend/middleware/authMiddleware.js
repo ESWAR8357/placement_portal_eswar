@@ -23,22 +23,13 @@ export const protect = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError || error instanceof jwt.TokenExpiredError) {
-      res.status(401);
-      return next(new Error("Not authorized, token invalid or expired"));
-    }
-
-    next(error);
+    res.status(401);
+    next(new Error(error.message || "Not authorized"));
   }
 };
 
 export const authorize = (...roles) => {
   return (req, res, next) => {
-    if (!req.user) {
-      res.status(401);
-      return next(new Error("Not authorized, token missing"));
-    }
-
     if (!roles.includes(req.user.role)) {
       res.status(403);
       return next(new Error("Forbidden: insufficient permissions"));
