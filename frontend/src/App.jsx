@@ -131,7 +131,7 @@ const App = () => {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute roles={["admin"]}>
               <AdminDashboard />
             </ProtectedRoute>
           }
@@ -139,7 +139,7 @@ const App = () => {
         <Route
           path="/admin/aptitude-questions"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute roles={["admin"]}>
               <AdminAptitudeQuestions />
             </ProtectedRoute>
           }
@@ -147,7 +147,7 @@ const App = () => {
         <Route
           path="/admin/technical-questions"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute roles={["admin"]}>
               <AdminTechnicalQuestions />
             </ProtectedRoute>
           }
@@ -155,7 +155,7 @@ const App = () => {
         <Route
           path="/admin/coding-questions"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute roles={["admin"]}>
               <AdminCodingQuestions />
             </ProtectedRoute>
           }
@@ -163,7 +163,7 @@ const App = () => {
         <Route
           path="/admin/analytics"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute roles={["admin"]}>
               <AdminAnalytics />
             </ProtectedRoute>
           }

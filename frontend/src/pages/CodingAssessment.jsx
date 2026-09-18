@@ -8,6 +8,7 @@ import { fetchCodingAssessmentQuestions, submitCodingAssessment } from "../servi
 import { getApiErrorMessage } from "../utils/validators.js";
 
 const TEST_DURATION_SECONDS = 25 * 60;
+const DRAFT_STORAGE_KEY = "placementPortalCodingAssessmentDraft";
 
 const STATUS_OPTIONS = [
   { key: "solved", label: "Solved" },
@@ -60,7 +61,7 @@ const CodingAssessment = () => {
     if (!isLoaded || questions.length === 0 || secondsLeft > 0 || isSubmitting) return;
     void handleSubmit(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [secondsLeft, isLoaded, isSubmitting]);
+  }, [secondsLeft, isLoaded, isSubmitting, questions.length]);
 
   const formattedTime = useMemo(() => {
     const minutes = Math.floor(secondsLeft / 60)
@@ -91,7 +92,7 @@ const CodingAssessment = () => {
   const handleSave = () => {
     try {
       sessionStorage.setItem(
-        "placementPortalCodingAssessmentDraft",
+        DRAFT_STORAGE_KEY,
         JSON.stringify({
           answers,
           secondsLeft,
@@ -106,11 +107,15 @@ const CodingAssessment = () => {
   useEffect(() => {
     // hydrate draft if present
     try {
-      const raw = sessionStorage.getItem("placementPortalCodingAssessmentDraft");
+      const raw = sessionStorage.getItem(DRAFT_STORAGE_KEY);
       if (!raw) return;
       const draft = JSON.parse(raw);
+      if (!(typeof draft?.secondsLeft === "number" && draft.secondsLeft > 0)) {
+        sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+        return;
+      }
       if (draft?.answers) setAnswers(draft.answers);
-      if (typeof draft?.secondsLeft === "number") setSecondsLeft(draft.secondsLeft);
+      setSecondsLeft(draft.secondsLeft);
       if (typeof draft?.currentIndex === "number") setCurrentIndex(draft.currentIndex);
     } catch {
       // ignore
@@ -134,6 +139,12 @@ const CodingAssessment = () => {
       };
 
       const response = await submitCodingAssessment(payload);
+
+      try {
+        sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {
+        // ignore
+      }
 
       navigate("/coding-assessment/result", {
         state: {

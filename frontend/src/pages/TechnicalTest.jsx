@@ -113,37 +113,6 @@ const TechnicalTest = () => {
 
     const timeTaken = TEST_DURATION_SECONDS - secondsLeft;
 
-    const reviewAnswers = questions.map((question) => {
-      const selectedAnswer = answers[question._id] ?? "";
-      const correctAnswer = question.answer;
-      const status = selectedAnswer === correctAnswer ? "correct" : "incorrect";
-
-      console.log("[TechnicalTest] build reviewAnswer", {
-        questionId: question._id,
-        questionText: question.question,
-        selectedAnswer,
-        correctAnswer,
-        status
-      });
-
-      return {
-        id: question._id,
-        questionText: question.question,
-        selectedAnswer,
-        correctAnswer,
-        status
-      };
-    });
-
-    try {
-      sessionStorage.setItem(
-        "placementPortalLastTechnicalReview",
-        JSON.stringify({ reviewAnswers, timeTaken })
-      );
-    } catch (e) {
-      console.warn("[TechnicalTest] failed to persist reviewAnswers", e);
-    }
-
     try {
       const payload = {
         testName: `${subjectDisplayNames[subject] || subject} Technical Test`,
@@ -155,6 +124,16 @@ const TechnicalTest = () => {
       };
 
       const response = await submitTechnicalTest(payload);
+      const reviewAnswers = response.result?.reviewAnswers ?? [];
+
+      try {
+        sessionStorage.setItem(
+          "placementPortalLastTechnicalReview",
+          JSON.stringify({ reviewAnswers, timeTaken })
+        );
+      } catch {
+        // ignore storage failures
+      }
 
       navigate("/technical-tests/result", {
         state: {

@@ -103,37 +103,6 @@ const AptitudeTest = () => {
 
     const timeTaken = TEST_DURATION_SECONDS - secondsLeft;
 
-    const reviewAnswers = questions.map((question) => {
-      const selectedAnswer = answers[question._id] ?? "";
-      const correctAnswer = question.correctOption;
-      const status = selectedAnswer === correctAnswer ? "correct" : "incorrect";
-
-      console.log("[AptitudeTest] build reviewAnswer", {
-        questionId: question._id,
-        questionText: question.question,
-        selectedAnswer,
-        correctAnswer,
-        status
-      });
-
-      return {
-        id: question._id,
-        questionText: question.question,
-        selectedAnswer,
-        correctAnswer,
-        status
-      };
-    });
-
-    try {
-      sessionStorage.setItem(
-        "placementPortalLastAptitudeReview",
-        JSON.stringify({ reviewAnswers, timeTaken })
-      );
-    } catch (e) {
-      console.warn("[AptitudeTest] failed to persist reviewAnswers", e);
-    }
-
     try {
       const payload = {
         testName: "Aptitude Test",
@@ -144,6 +113,16 @@ const AptitudeTest = () => {
       };
 
       const response = await submitAptitudeTest(payload);
+      const reviewAnswers = response.result?.reviewAnswers ?? [];
+
+      try {
+        sessionStorage.setItem(
+          "placementPortalLastAptitudeReview",
+          JSON.stringify({ reviewAnswers, timeTaken })
+        );
+      } catch {
+        // ignore storage failures
+      }
 
       navigate("/aptitude-tests/result", {
         state: {

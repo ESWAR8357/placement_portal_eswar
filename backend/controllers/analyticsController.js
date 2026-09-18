@@ -50,6 +50,7 @@ export const getAnalyticsTests = async (req, res, next) => {
           $bucket: {
             groupBy: "$percentage",
             boundaries: [0, 25, 50, 75, 101],
+            default: "other",
             output: { count: { $sum: 1 } }
           }
         }
@@ -72,7 +73,7 @@ export const getAnalyticsTests = async (req, res, next) => {
       testsByCategory: testsByCategory.map((t) => ({
         category: t._id,
         count: t.count,
-        averagePercentage: Number(t.averagePercentage.toFixed(2))
+        averagePercentage: Number((t.averagePercentage || 0).toFixed(2))
       })),
       scoreDistribution
     });
