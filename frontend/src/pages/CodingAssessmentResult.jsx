@@ -2,8 +2,6 @@ import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiArrowLeft, FiRefreshCcw } from "react-icons/fi";
 
-import Loader from "../components/Loader.jsx";
-
 const CodingAssessmentResult = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -26,7 +24,20 @@ const CodingAssessmentResult = () => {
   if (!derived) {
     return (
       <section className="container-page py-6 sm:py-8">
-        <Loader label="Loading result" />
+        <div className="mx-auto max-w-3xl rounded-lg border border-slate-200 bg-white p-6 text-center shadow-soft dark:border-slate-800 dark:bg-slate-900">
+          <h1 className="text-xl font-bold text-slate-950 dark:text-white">No result to display</h1>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            Submit a coding assessment to see your summary here.
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <button type="button" className="btn-primary" onClick={() => navigate("/coding-assessment")}>
+              Start Coding Assessment
+            </button>
+            <button type="button" className="btn-secondary" onClick={() => navigate("/dashboard")}>
+              Back to Dashboard
+            </button>
+          </div>
+        </div>
       </section>
     );
   }
@@ -79,7 +90,7 @@ const CodingAssessmentResult = () => {
                 type="button"
                 className="btn-primary"
                 onClick={() =>
-                  navigate("/coding-assessmentAction", {
+                  navigate("/coding-assessment/review", {
                     state: { reviewData: derived.reviewData, result: derived }
                   })
                 }

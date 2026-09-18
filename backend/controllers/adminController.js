@@ -1,6 +1,8 @@
 import TestResult from "../models/TestResult.js";
 import User from "../models/User.js";
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export const getAdminDashboard = async (req, res, next) => {
   try {
     const totalUsers = await User.countDocuments();
@@ -54,7 +56,9 @@ export const getAdminDashboard = async (req, res, next) => {
 
 export const getAdminUsers = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, role, query } = req.query;
+    const { role, query } = req.query;
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
     const filter = {};
 
     if (role) {
@@ -62,21 +66,21 @@ export const getAdminUsers = async (req, res, next) => {
     }
 
     if (query) {
-      const regex = new RegExp(query, "i");
+      const regex = new RegExp(escapeRegex(String(query)), "i");
       filter.$or = [{ name: regex }, { email: regex }];
     }
 
     const total = await User.countDocuments(filter);
     const users = await User.find(filter)
       .sort({ createdAt: -1 })
-      .skip((Number(page) - 1) * Number(limit))
-      .limit(Number(limit))
+      .skip((page - 1) * limit)
+      .limit(limit)
       .select("name email role testsTaken averageScore highestScore createdAt");
 
     res.status(200).json({
       total,
-      page: Number(page),
-      limit: Number(limit),
+      page,
+      limit,
       users
     });
   } catch (error) {

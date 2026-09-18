@@ -1,6 +1,7 @@
 import TechnicalQuestion from "../models/TechnicalQuestion.js";
 import TestResult from "../models/TestResult.js";
 import technicalQuestionsData from "../utils/technicalQuestions.js";
+import { refreshUserTestStats } from "../utils/userStats.js";
 
 const sanitizeUser = (user) => ({
   id: user._id,
@@ -69,7 +70,7 @@ export const getTechnicalQuestions = async (req, res, next) => {
     let questions = await TechnicalQuestion.find({ subject })
       .sort({ createdAt: 1 })
       .limit(limit)
-      .select("question options answer");
+      .select("question options");
 
     if (!questions.length) {
       const questionsToInsert = technicalQuestionsData[subject].map((q) => ({
@@ -103,8 +104,12 @@ export const submitTechnicalTest = async (req, res, next) => {
       throw new Error("Invalid subject");
     }
 
-    const questionIds = answers.map((answer) => answer.questionId);
-    const questions = await TechnicalQuestion.find({ _id: { $in: questionIds } });
+    const submittedAnswers = new Map(
+      answers
+        .filter((answer) => answer?.questionId)
+        .map((answer) => [String(answer.questionId), answer.selectedOption ?? ""])
+    );
+    const questions = await TechnicalQuestion.find({ _id: { $in: [...submittedAnswers.keys()] } });
 
     if (!questions.length) {
       res.status(400);
@@ -115,22 +120,31 @@ export const submitTechnicalTest = async (req, res, next) => {
     let correctCount = 0;
     let answeredCount = 0;
 
-    answers.forEach((answer) => {
-      const question = questionsMap.get(answer.questionId);
-      if (!question) {
-        return;
-      }
+    const reviewAnswers = [...submittedAnswers.entries()]
+      .filter(([questionId]) => questionsMap.has(questionId))
+      .map(([questionId, selectedOption]) => {
+        const question = questionsMap.get(questionId);
+        const selectedAnswer = String(selectedOption ?? "");
+        const isCorrect = selectedAnswer === question.answer;
 
-      if (answer.selectedOption != null && String(answer.selectedOption).trim() !== "") {
-        answeredCount += 1;
-      }
+        if (selectedAnswer.trim() !== "") {
+          answeredCount += 1;
+        }
 
-      if (answer.selectedOption === question.answer) {
-        correctCount += 1;
-      }
-    });
+        if (isCorrect) {
+          correctCount += 1;
+        }
 
-    const totalQuestions = questions.length;
+        return {
+          id: question._id,
+          questionText: question.question,
+          selectedAnswer,
+          correctAnswer: question.answer,
+          status: isCorrect ? "correct" : "incorrect"
+        };
+      });
+
+    const totalQuestions = reviewAnswers.length;
     const incorrectCount = totalQuestions - correctCount;
     const percentage = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
 
@@ -144,14 +158,7 @@ export const submitTechnicalTest = async (req, res, next) => {
       date: new Date()
     });
 
-    const previousCount = req.user.testsTaken || 0;
-    const nextCount = previousCount + 1;
-    req.user.testsTaken = nextCount;
-    req.user.averageScore = Math.round(
-      ((req.user.averageScore || 0) * previousCount + percentage) / nextCount
-    );
-    req.user.highestScore = Math.max(req.user.highestScore || 0, percentage);
-    await req.user.save();
+    await refreshUserTestStats(req.user);
 
     res.status(201).json({
       result: {
@@ -165,7 +172,8 @@ export const submitTechnicalTest = async (req, res, next) => {
         correctCount,
         incorrectCount,
         answeredCount,
-        subject
+        subject,
+        reviewAnswers
       },
       user: sanitizeUser(req.user)
     });
