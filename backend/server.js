@@ -23,20 +23,13 @@ const PORT = process.env.PORT || 5000;
 
 connectDB();
 
-app.set("trust proxy", 1);
-
-const allowedOrigins = (process.env.CLIENT_URL || "")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
-const corsOptions = {
-  origin: allowedOrigins.length ? allowedOrigins : true,
-  credentials: true
-};
-
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+  app.use(
+    cors({
+      origin: true,
+      credentials: true
+    })
+  );
+app.options("*", cors({ origin: true, credentials: true }));
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" }

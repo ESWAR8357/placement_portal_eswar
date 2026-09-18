@@ -3,9 +3,7 @@ import codingQuestionsData from "../utils/codingQuestions.js";
 
 export const getCodingQuestions = async (req, res, next) => {
   try {
-    const { topic, difficulty } = req.query;
-    const page = Math.max(Number(req.query.page) || 1, 1);
-    const limit = Math.min(Math.max(Number(req.query.limit) || 20, 1), 100);
+    const { page = 1, limit = 20, topic, difficulty } = req.query;
     const query = {};
 
     if (topic) query.topic = topic;
@@ -18,13 +16,13 @@ export const getCodingQuestions = async (req, res, next) => {
       await CodingQuestion.insertMany(codingQuestionsData);
     }
 
-    const skip = (page - 1) * limit;
-    const items = await CodingQuestion.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
+    const skip = (Number(page) - 1) * Number(limit);
+    const items = await CodingQuestion.find(query).sort({ createdAt: -1 }).skip(skip).limit(Number(limit));
 
     res.status(200).json({
       total: await CodingQuestion.countDocuments(query),
-      page,
-      limit,
+      page: Number(page),
+      limit: Number(limit),
       questions: items
     });
   } catch (error) {

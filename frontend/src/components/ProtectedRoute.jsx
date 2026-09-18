@@ -3,8 +3,8 @@ import { Navigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth.js";
 import Loader from "./Loader.jsx";
 
-const ProtectedRoute = ({ children, roles }) => {
-  const { user, isAuthenticated, isAuthLoading } = useAuth();
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isAuthLoading } = useAuth();
   const location = useLocation();
 
   if (isAuthLoading) {
@@ -13,10 +13,6 @@ const ProtectedRoute = ({ children, roles }) => {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace state={{ from: location }} />;
-  }
-
-  if (roles?.length && !roles.includes(user?.role)) {
-    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
